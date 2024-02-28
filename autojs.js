@@ -1,4 +1,5 @@
 auto()
+let loadingPic = require("./loading.png")
 if (device.sdkInt > 28) {
     //等待截屏权限申请并同意
     requestScreenCapture(false);
@@ -72,7 +73,7 @@ while (true) {
         if (gameStatus === 0) {
             let zeroStepLoginColor = "#bbb7b0"
             let zeroStepPoint = findColor(captureScreen(), zeroStepLoginColor, {
-                threshold: 4
+                threshold: 1
             });
             sleep(500)
             let zeroTwoStepPointColor = "#ffffff"
@@ -81,26 +82,20 @@ while (true) {
                 if (zeroTwoStepPoint) {
                     sleep(2000)
                     longClick(zeroTwoStepPoint.x, zeroTwoStepPoint.y)
-                    log("已经开始游戏")
-                    gameStatus = 1
+                    let targetImage = images.read(loadingPic);
+                    var findResult = images.findImage(captureScreen(), targetImage);
+                    if (findResult){
+                        log("已经开始游戏")
+                        gameStatus = 1
+                        stopWatchdog=true
+                        sleep(10000)
+                        stopWatchdog=false
+                        
+                    }
+                   
                 }
             }
         }
-        if (gameStatus === 1) {
-            let TwoOneStepColor = "#161616"
-            sleep(500)
-            let twoOneStepPoint = findColor(captureScreen(), TwoOneStepColor, {
-                threshold: 2
-            });
-            if (twoOneStepPoint) {
-                stopWatchdog = true
-                sleep(10000)
-                stopWatchdog = false
-                log("成功测试")
-            }
-        }
-
-
     } else {
         toast("游戏尚未打开");
         app.launchPackage("com.neowizgames.game.browndust2")
