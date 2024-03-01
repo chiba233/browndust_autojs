@@ -23,6 +23,7 @@ threads.start(function () {
             app.launchPackage("com.neowizgames.game.browndust2")
             log("已经打开游戏")
             gameStatus = 0
+            stopWatchdog= false
         }
         log("守护进程正常")
         let x = 800;
