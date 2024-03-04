@@ -15,6 +15,24 @@ var gamePackageName = "com.neowizgames.game.browndust2";
 var gameStatus = 0
 var currentApp
 var stopWatchdog = false
+let account = "quhao"
+let accountPassword = "90u"
+var url = "http://yy.yatousy.com/90/api9090.php";
+http.post(url, {
+    "act": account,
+    "xx": accountPassword
+}, {
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+}, function (resp, err) {
+    if (err) {
+        console.error("请求失败: ", err);
+        return;
+    }
+    var responseData = resp.body.string();
+    console.log("服务器响应: ", responseData);
+});
 threads.start(function () {
     //此为守护进程，守护游戏是否卡死，并执行kill游戏及开启游戏
     while (true) {
@@ -23,9 +41,10 @@ threads.start(function () {
             app.launchPackage("com.neowizgames.game.browndust2")
             log("已经打开游戏")
             gameStatus = 0
-            stopWatchdog= false
+            stopWatchdog = false
         }
         log("守护进程正常")
+        log("watchdogStatus:",stopWatchdog)
         let x = 800;
         let y = 500;
         // 捕获初始颜色值
@@ -39,7 +58,7 @@ threads.start(function () {
         log("守护进程正常2")
         let currentColor = colors.toString(images.pixel(currentImg, x, y));
         log(currentColor)
-        if (currentColor === initialColor) {
+        if (currentColor === initialColor&& stopWatchdog === false) {
             sleep(8000)
             let secoundImg = captureScreen()
             sleep(1000)
@@ -110,6 +129,36 @@ while (true) {
                 stopWatchdog = false
                 gamePic.recycle()
             }
+        }
+        if (gameStatus === 1) {
+            //let ocrGameStatus = paddle.ocrText(captureScreen(),[useSlim=true,cpuThreadNum=2]);
+            //sleep(2500)
+            //Log("识别信息: " + JSON.stringify(ocrGameStatus))
+            let gameid = 1696860888453;
+            let shuliang = 50;
+            let shuliang1 = 5
+            http.post(url, {
+                "act": "up",
+                "xx": accountPassword,
+                "myid": gameid,
+                "state": 1,
+                "shuliang": shuliang,
+                "shuliang1": shuliang1
+            }, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }, function (resp, err) {
+                if (err) {
+                    console.error("请求失败: ", err);
+                    return;
+                }
+                var responseData = resp.body.string();
+                console.log("服务器响应: ", responseData);
+                // 这里可以添加更多的代码来处理responseData，比如解析JSON数据
+            });
+
+
         }
     }
     // 等待5秒后再次检查
